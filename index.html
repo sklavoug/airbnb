@@ -411,15 +411,13 @@
 				// Whole sentiment (positive)
 				d3.selectAll("path")
 					.transition()
-					.duration(3000)
+					.duration(2000)
 					.attr("fill", "black")
 					.attr("opacity", 1)
 					.call(zoom.transform, d3.zoomIdentity.translate(0,0).scale(1.0))
 
 
 				svg.selectAll("circle")
-					.transition()
-					.duration(3000)
 					.attr("opacity", function(d) {
 						if (sentiment['prop_positive'][d['properties']['id']] === 1) {
 							return 1
@@ -456,7 +454,7 @@
 
 				d3.selectAll("path")
 					.transition()
-					.duration(3000)
+					.duration(2000)
 					.attr("fill", "black")
 					.attr("opacity", 1)
 					.call(zoom.transform, d3.zoomIdentity.translate(0,0).scale(1.0))
@@ -493,8 +491,6 @@
 					.call(zoom.transform, d3.zoomIdentity.translate(syd_zoom[0],syd_zoom[1]).scale(syd_zoom[2]))
 
 					svg.selectAll("circle")
-						.transition()
-						.duration(1000)
 						.attr("opacity", function(d) {
 							if (d['properties']['neighbourhood'] === 'Sydney') {
 								if (sentiment['prop_positive'][d['properties']['id']] < 0.5) {
@@ -536,8 +532,6 @@
 
 
 				svg.selectAll("circle")
-					.transition()
-					.duration(1000)
 					.attr("opacity", function(d) {
 						if (d['properties']['neighbourhood'] === 'Hurstville') {
 							if (sentiment['prop_positive'][d['properties']['id']] < 0.5) {
@@ -573,14 +567,13 @@
 			scroller
 				.setup({
 					step: "#scrolly article .step",
-					offset: 0.9,
+					offset: 1,
 					debug: false
 				})
 				.onStepEnter(handleStepEnter);
 		}
 
         // CODE
-        console.log(figure)
 
         var margin = {top: 10, right: 30, bottom: 20, left: 50},
         width = window.innerWidth / 1.2 - margin.left - margin.right,
@@ -612,24 +605,21 @@
 
 			d3.json("locations.geojson", function(data) {
 
-			// set projection
+				svg.append("g")
+					.selectAll("circle")
+					.data(data.features)
+					.enter()
+					.append("circle")
+						.attr("fill", "blue")
+						.attr("cy", function(d) {return projection(d['geometry']['coordinates'])[1]})
+						.attr("cx", function(d) {return projection(d['geometry']['coordinates'])[0]})
+						.attr("r", 1)
+						.attr("id", function(d) {
+							return d.properties['id']
+						}).attr("class", function(d) {
+							return d.properties['neighbourhood']
+						})
 
-			svg.append("g")
-				.selectAll("circle")
-				.data(data.features)
-				.enter()
-				.append("circle")
-					.attr("fill", "blue")
-					.attr("cy", function(d) {return projection(d['geometry']['coordinates'])[1]})
-					.attr("cx", function(d) {return projection(d['geometry']['coordinates'])[0]})
-					.attr("r", 1)
-					.attr("id", function(d) {
-						return d.properties['id']
-					}).attr("class", function(d) {
-						return d.properties['neighbourhood']
-					})
-
-			console.log(data)
 			})
 
             
