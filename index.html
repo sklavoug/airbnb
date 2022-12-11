@@ -146,7 +146,7 @@
 					<p>While the Sydney neighbourhood has more properties with negative reviews than any other neighbourhood, these also represent a very small proportion of the total properties in that neighbourhood (&lt;1%).</p>
 				</div>
 				<div class="step" data-step="13">
-					<p>In contrast, the Hurstville neighbourhood has the highest proportion of negatively-reviewed properties, with around 5% of properties advertised there having majority negative reviews.</p>
+					<p>In contrast, the Hurstville neighbourhood has the highest proportion of negatively-reviewed properties, with around 5% of properties advertised there having more negative than positive reviews.</p>
 				</div>
 			</article>
 
@@ -418,6 +418,8 @@
 
 
 				svg.selectAll("circle")
+					.transition()
+					.duration(2000)
 					.attr("opacity", function(d) {
 						if (sentiment['prop_positive'][d['properties']['id']] === 1) {
 							return 1
