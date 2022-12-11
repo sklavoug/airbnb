@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Sydney Airbnb</title>
+	<meta name="description" content="Sydney Airbnb" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<style>
+		body {
+            font-family: "Public Sans";
+        }
+
+		#scrolly {
+			position: relative;
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: flex;
+			padding: 1rem;
+		}
+
+		#scrolly_2 {
+			position: relative;
+			display: -webkit-box;
+			display: -ms-flexbox;
+			display: flex;
+			padding: 1rem;
+		}
+		
+		article {
+			position: relative;
+			padding: 0;
+			max-width: 30rem;
+			margin: 0 auto;
+		}
+
+		figure {
+			position: -webkit-sticky;
+			position: sticky;
+			left: 0;
+			width: 80%;
+			margin: 0;
+			-webkit-transform: translate3d(0, 0, 0);
+			-moz-transform: translate3d(0, 0, 0);
+			transform: translate3d(0, 0, 0);
+			z-index: 0;
+		}
+
+		figure p {
+			text-align: center;
+			padding: 1rem;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			-moz-transform: translate(-50%, -50%);
+			-webkit-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+			font-size: 8rem;
+			font-weight: 900;
+			color: #fff;
+		}
+
+		.step {
+			margin: 0 auto 2rem auto;
+			color: black;
+			z-index: 1;
+			
+		}
+
+		.step:last-child {
+			margin-bottom: 0;
+		}
+
+		.step p {
+			text-align: center;
+			padding: 1rem;
+			font-size: 2rem;
+			background-color: white;
+			z-index: 0;
+		}
+
+        h1 {
+            font-size: 60px;
+        }
+
+        .intro__dek {
+            display: block;
+            font-weight: 200
+        }
+
+        .intro__dek {
+            line-height: 1.5;
+            font-size: 40px;
+        }
+	</style>
+</head>
+
+<body>
+	<main>
+		<section id="intro">
+			<h1 class="intro__hed">Sydney Airbnb</h1>
+		</section>
+
+		<section id="scrolly">
+			<article>
+				<div class="step" data-step="1">
+					<p>There are a total of 19,000 unique listings for Sydney Airbnb properties.</p>
+				</div>
+				<div class="step" data-step="2">
+					<p>Exploring insights around New Year's Eve and sentiment of reviews can help inform NSW government policy in this area.</p>
+				</div>
+				<div class="step" data-step="3">
+					<p>Unsurprisingly, New Year's Eve is a very busy time; at any one time in the last quarter, an average of 26% of listed properties were available...</p>
+				</div>
+				<div class="step" data-step="4">
+					<p>...but for NYE it's only 18%. This makes the NYE period the highest for unavailability, both by absolute number and percentage of properties available.</p>
+				</div>
+				<div class="step" data-step="6">
+					<p>This dynamic also plays out in pricing; the average month-end price for a property is $282 per night, but on NYE it's $397 (+40%, +$115).</p>
+				</div>
+				<div class="step" data-step="6">
+					<p>(red = above average normally and on NYE; green = below average normally and on NYE; orange = above average normally but below average on NYE)</p>
+				</div>
+				<div class="step" data-step="7">
+					<p>The difference becomes even more stark when focusing on only the Sydney neighbourhood, where the average availability is 21%...</p>
+				</div>
+				<div class="step" data-step="7">
+					<p>...but on NYE it's 13%.</p>
+				</div>
+				<div class="step" data-step="8">
+					<p>The pricing difference is also more acute: an average of $219 but $382 on NYE (+74%, +$163 per night).</p>
+				</div>
+				<div class="step" data-step="9">
+					<p>In terms of reviews, sentiment is generally quite positive with 80% of properties having all positive reviews.</p>
+				</div>
+				<div class="step" data-step="10">
+					<p>Around 18% of properties have a balance between positive and negative reviews...</p>
+				</div>
+				<div class="step" data-step="11">
+					<p>...and around 2% have more negative than positive reviews.</p>
+				</div>
+				<div class="step" data-step="12">
+					<p>While the Sydney neighbourhood has more properties with negative reviews than any other neighbourhood, these also represent a very small proportion of the total properties in that neighbourhood (&lt;1%).</p>
+				</div>
+				<div class="step" data-step="13">
+					<p>In contrast, the Hurstville neighbourhood has the highest proportion of negatively-reviewed properties, with around 5% of properties advertised there having majority negative reviews.</p>
+				</div>
+			</article>
+
+			<figure>
+			</figure>
+		</section>
+		<section id="outro"></section>
+	</main>
+
+	<!-- <div class='debug'></div> -->
+	<script type = "text/javascript" src = "https://d3js.org/d3.v4.min.js"></script>
+	<script src="https://unpkg.com/scrollama"></script>
+	<script>
+		// using d3 for convenience
+		var main = d3.select("main");
+		var scrolly = main.select("#scrolly");
+		var figure = d3.selectAll("figure");
+		var article = d3.selectAll("article");
+		var step = d3.selectAll(".step");
+
+		// initialize the scrollama
+		var scroller = scrollama();
+
+		// generic window resize listener event
+		function handleResize() {
+			// 1. update height of step elements
+			var stepH = Math.floor(window.innerHeight * 1);
+			step.style("height", stepH + "px");
+
+			var figureHeight = window.innerHeight / 1.5;
+			var figureMarginTop = (window.innerHeight - figureHeight) / 1.5;
+
+			figure
+				.style("height", figureHeight + "px")
+				.style("top", figureMarginTop + "px");
+
+			// 3. tell scrollama to update new element dimensions
+			scroller.resize();
+		}
+
+		var changes = []
+		var sentiment;
+		var availability;
+		var availability_nye;
+		var prices;
+
+		// NOTHING BROKEN YET. Stop here if it breaks!
+
+		d3.json('availability.json', function(data) {
+			availability = data
+		})
+
+		d3.json('availability_nye.json', function(data) {
+			availability_nye = data
+		})
+
+		d3.json('sentiment.json', function(data) {
+			sentiment = data
+		})
+
+		d3.json('prices.json', function(data) {
+			prices = data
+		})
+
+
+
+		// scrollama event handlers
+		function handleStepEnter(response) {
+			// response = { element, direction, index }
+
+			// add color to current step only
+			step.classed("is-active", function (d, i) {
+				return i === response.index;
+			});
+
+			var zoom = d3.zoom().on("zoom", function() {
+				svg.attr("transform", d3.event.transform);
+			})
+
+			// update graphic based on step
+            if (response.index === 1) {				
+				d3.selectAll("path")
+					.attr("fill", "gray")
+					.attr("stroke", "white")
+				d3.selectAll("circle")
+					.attr("fill", "blue")
+					.attr("r", 1)
+            } else if (response.index === 2) {
+				// Whole AVG availability
+				d3.selectAll("path")
+					.attr("fill", "black")
+
+				svg.selectAll("circle")
+					.attr("fill", "green").attr("r", 1)
+					.attr("opacity", function(d) {
+						if (availability[d['properties']['id']] === 'f' || d['properties']['id'] in availability === false) {
+							return 0
+						} else {
+							return 1
+						}
+					})
+			} else if (response.index === 3) {
+				// Whole NYE availability
+				d3.selectAll("path")
+					.attr("fill", "black")
+					.attr("opacity", 1)
+					.call(zoom.transform, d3.zoomIdentity.translate(0,0).scale(1.0))
+
+
+				svg.selectAll("circle")
+					.attr("fill", "green")
+					.attr("r", 1)
+					.attr("opacity", function(d) {
+						if (availability_nye[d['properties']['id']] === 'f' || d['properties']['id'] in availability_nye === false) {
+							return 0
+						} else {
+							return 1
+						}
+				})
+
+			} else if (response.index === 4) {
+				// Whole pricing avg
+				d3.selectAll("path")
+					.transition()
+					.duration(3000)
+					.attr("fill", "black")
+					.attr("opacity", 1)
+					.call(zoom.transform, d3.zoomIdentity.translate(0,0).scale(1.0))
+
+
+
+				svg.selectAll("circle")
+					.attr("opacity", 1)
+					.attr("r", 1)
+					.attr("fill", function(d) {
+						var curr_avg = prices['AVG'][d['properties']['id']]
+						var curr_nye = prices['NYE'][d['properties']['id']]
+
+						if (curr_avg >= 282 && curr_nye <397) {
+							return "orange"
+						} else if (curr_avg >= 282 && curr_nye >= 397) {
+							return "red"
+						} else {
+							return "green"
+						}
+					})
+			} else if (response.index === 6) {
+				// Sydney AVG availability
+				svg.selectAll("circle")
+					.attr("fill", "green").attr("r", 0.3)
+					.attr("opacity", function(d) {
+						if (availability[d['properties']['id']] === 'f' || d['properties']['id'] in availability === false || d['properties']['neighbourhood'] !== 'Sydney') {
+							return 0
+						} else {
+							return 1
+						}
+					})
+
+
+				svg.selectAll("path")
+					.transition()
+					.duration(3000)
+					.attr("opacity", function(d) {
+						if (d['properties']['neighbourhood'] === 'Sydney') {
+							return 1 
+						} else {
+							return 0
+						}
+					})
+					.call(zoom.transform, d3.zoomIdentity.translate(-400,-300).scale(6.0))
+			} else if (response.index === 7) {
+				// Sydney NYE availability
+
+				svg.selectAll("circle")
+					.attr("fill", "green").attr("r", 0.3)
+					.attr("opacity", function(d) {
+						if (availability_nye[d['properties']['id']] === 'f' || d['properties']['id'] in availability_nye === false || d['properties']['neighbourhood'] !== 'Sydney') {
+							return 0
+						} else {
+							return 1
+						}
+					})
+
+				svg.selectAll("path")
+					.transition()
+					.duration(1000)
+					.attr("opacity", function(d) {
+						if (d['properties']['neighbourhood'] === 'Sydney') {
+							return 1 
+						} else {
+							return 0
+						}
+					})
+					.call(zoom.transform, d3.zoomIdentity.translate(-400,-300).scale(6.0))
+			
+			} else if (response.index === 8) {
+				// Sydney pricing avg
+
+				svg.selectAll("circle")
+					.attr("opacity", function(d) {
+						if (d['properties']['neighbourhood'] === 'Sydney') {
+							return 1
+						} else {
+							return 0
+						}
+					})
+					.attr("r", 0.3)
+					.attr("fill", function(d) {
+						var curr_avg = prices['AVG'][d['properties']['id']]
+						var curr_nye = prices['NYE'][d['properties']['id']]
+
+						if (curr_avg >= 282 && curr_nye <397) {
+							return "orange"
+						} else if (curr_avg >= 282 && curr_nye >= 397) {
+							return "red"
+						} else {
+							return "green"
+						}
+					})
+
+			} else if (response.index === 9) {
+				// Whole sentiment
+				d3.selectAll("path")
+					.transition()
+					.duration(3000)
+					.attr("fill", "black")
+					.attr("opacity", 1)
+					.call(zoom.transform, d3.zoomIdentity.translate(0,0).scale(1.0))
+
+
+				svg.selectAll("circle")
+					.attr("opacity", function(d) {
+						if (sentiment['prop_positive'][d['properties']['id']] === 1) {
+							return 1
+						} else {
+							return 0
+						}
+					})
+					.attr("fill", "green")
+					.attr("r", 1)
+
+
+			} else if (response.index === 10) {
+
+				svg.selectAll("circle")
+					.transition()
+					.duration(1000)
+					.attr("opacity", function(d) {
+						if (sentiment['prop_positive'][d['properties']['id']] >= 0.5 && sentiment['prop_positive'][d['properties']['id']] < 1) {
+							return 1
+						} else {
+							return 0
+						}
+					})
+					.attr("fill", "orange")
+					.attr("r", 1)
+
+			} else if (response.index === 11) {
+
+				svg.selectAll("circle")
+					.transition()
+					.duration(1000)
+					.attr("opacity", function(d) {
+						if (sentiment['prop_positive'][d['properties']['id']] < 0.5) {
+							return 1
+						} else {
+							return 0
+						}
+					})
+					.attr("fill", "red")
+					.attr("r", 1)
+
+			} else if (response.index === 11) {
+
+				svg.selectAll("circle")
+					.transition()
+					.duration(1000)
+					.attr("opacity", function(d) {
+						if (sentiment['prop_positive'][d['properties']['id']] < 0.5) {
+							return 1
+						} else {
+							return 0
+						}
+					})
+					.attr("fill", "red")
+					.attr("r", 1)
+
+			} else if (response.index === 12) {
+				svg.selectAll("path")
+					.transition()
+					.duration(1000)
+					.attr("opacity", function(d) {
+						if (d['properties']['neighbourhood'] === 'Sydney') {
+							return 1 
+						} else {
+							return 0
+						}
+					})
+					.call(zoom.transform, d3.zoomIdentity.translate(-400,-300).scale(6.0))
+
+					svg.selectAll("circle")
+						.transition()
+						.duration(1000)
+						.attr("opacity", function(d) {
+							if (d['properties']['neighbourhood'] === 'Sydney') {
+								if (sentiment['prop_positive'][d['properties']['id']] < 0.5) {
+									return 1
+								} else if (sentiment['prop_positive'][d['properties']['id']] >= 0.5 && sentiment['prop_positive'][d['properties']['id']] < 1) {
+									return 1
+								} else if (sentiment['prop_positive'][d['properties']['id']] === 1) {
+									return 1
+								} else {
+									return 0
+								}
+							} else {return 0}})
+						.attr("fill", function(d) {
+							if (sentiment['prop_positive'][d['properties']['id']] < 0.5) {
+								return "red"
+							} else if (sentiment['prop_positive'][d['properties']['id']] >= 0.5 && sentiment['prop_positive'][d['properties']['id']] < 1) {
+								return "orange"
+							} else if (sentiment['prop_positive'][d['properties']['id']] === 1) {
+								return "green"
+							}
+						}).attr("r", 0.3)
+			} else if (response.index === 13) {
+				svg.selectAll("path")
+					.transition()
+					.duration(1000)
+					.attr("opacity", function(d) {
+						if (d['properties']['neighbourhood'] === 'Hurstville') {
+							return 1 
+						} else {
+							return 0
+						}
+					})
+					.call(zoom.transform, d3.zoomIdentity.translate(-200,-800).scale(6.0))
+
+
+				svg.selectAll("circle")
+					.transition()
+					.duration(1000)
+					.attr("opacity", function(d) {
+						if (d['properties']['neighbourhood'] === 'Hurstville') {
+							if (sentiment['prop_positive'][d['properties']['id']] < 0.5) {
+								return 1
+							} else if (sentiment['prop_positive'][d['properties']['id']] >= 0.5 && sentiment['prop_positive'][d['properties']['id']] < 1) {
+								return 1
+							} else if (sentiment['prop_positive'][d['properties']['id']] === 1) {
+								return 1
+							} else {
+								return 0
+							}
+						} else {return 0}})
+					.attr("fill", function(d) {
+						if (sentiment['prop_positive'][d['properties']['id']] < 0.5) {
+							return "red"
+						} else if (sentiment['prop_positive'][d['properties']['id']] >= 0.5 && sentiment['prop_positive'][d['properties']['id']] < 1) {
+							return "orange"
+						} else if (sentiment['prop_positive'][d['properties']['id']] === 1) {
+							return "green"
+						}
+					}).attr("r", 0.3)
+			}
+	}
+
+		function init() {
+
+			// 1. force a resize on load to ensure proper dimensions are sent to scrollama
+			handleResize();
+
+			// 2. setup the scroller passing options
+			// 		this will also initialize trigger observations
+			// 3. bind scrollama event handlers (this can be chained like below)
+			scroller
+				.setup({
+					step: "#scrolly article .step",
+					offset: 0.9,
+					debug: false
+				})
+				.onStepEnter(handleStepEnter);
+		}
+
+        // CODE
+        console.log(figure)
+
+        var margin = {top: 10, right: 30, bottom: 20, left: 50},
+        width = window.innerWidth / 1.2 - margin.left - margin.right,
+        height = window.innerHeight / 1.5 - margin.top - margin.bottom;
+
+        var svg = figure.append("svg")
+                        .attr("width", window.innerWidth / 1.2 + margin.left + margin.right)
+                        .attr("height", window.innerHeight / 1.5 + margin.top + margin.bottom)
+
+        // Load external data and boot
+        d3.json("neighbourhoods_simple.geojson", function(data){
+
+			var projection = d3.geoMercator().fitSize([width, height], data)
+            var path = d3.geoPath().projection(projection)
+
+            // Draw the map
+            svg.append("g")
+                .selectAll("path")
+                .data(data.features)
+                .enter()
+                .append("path")
+                    .attr("fill", "gray")
+                    .attr("d", path)
+                    .attr("stroke", "white")
+                    .attr("id", function(d) { 
+                        return d['properties']['neighbourhood']
+                    })
+					.attr("z-index", 1)
+
+			d3.json("locations.geojson", function(data) {
+
+			// set projection
+
+			svg.append("g")
+				.selectAll("circle")
+				.data(data.features)
+				.enter()
+				.append("circle")
+					.attr("fill", "blue")
+					.attr("cy", function(d) {return projection(d['geometry']['coordinates'])[1]})
+					.attr("cx", function(d) {return projection(d['geometry']['coordinates'])[0]})
+					.attr("r", 1)
+					.attr("id", function(d) {
+						return d.properties['id']
+					}).attr("class", function(d) {
+						return d.properties['neighbourhood']
+					})
+
+			console.log(data)
+			})
+
+            
+                
+        })
+
+        
+
+        
+
+		// kick things off
+		init();
+	</script>
+</body>
+
+</html>
