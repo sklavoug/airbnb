@@ -19,14 +19,6 @@
 			display: flex;
 			padding: 1rem;
 		}
-
-		#scrolly_2 {
-			position: relative;
-			display: -webkit-box;
-			display: -ms-flexbox;
-			display: flex;
-			padding: 1rem;
-		}
 		
 		article {
 			position: relative;
@@ -48,17 +40,30 @@
 		}
 
 		figure p {
-			text-align: center;
 			padding: 1rem;
 			position: absolute;
-			top: 50%;
-			left: 50%;
+			top: 0%;
+			left: 20%;
 			-moz-transform: translate(-50%, -50%);
 			-webkit-transform: translate(-50%, -50%);
 			transform: translate(-50%, -50%);
-			font-size: 8rem;
-			font-weight: 900;
-			color: #fff;
+			font-size: 1.2rem;
+			color: black;
+		}
+
+		.legend {
+			top: 0em;
+			text-align: left;
+		}
+
+		.legend_2 {
+			top: 1.5em;
+			text-align: left;
+		}
+
+		.legend_3 {
+			top: 3em;
+			text-align: left;
 		}
 
 		.step {
@@ -119,9 +124,6 @@
 				<div class="step" data-step="6">
 					<p>This dynamic also plays out in pricing; the average month-end price for a property is $282 per night, but on NYE it's $397 (+40%, +$115).</p>
 				</div>
-				<div class="step" data-step="6">
-					<p>(red = above average normally and on NYE; green = below average normally and on NYE; orange = above average normally but below average on NYE)</p>
-				</div>
 				<div class="step" data-step="7">
 					<p>The difference becomes even more stark when focusing on only the Sydney neighbourhood, where the average availability is 21%...</p>
 				</div>
@@ -149,6 +151,9 @@
 			</article>
 
 			<figure>
+				<p class="legend">🟦 Airbnb properties</p>
+				<p class="legend_2"></p>
+				<p class="legend_3"></p>
 			</figure>
 		</section>
 		<section id="outro"></section>
@@ -184,6 +189,8 @@
 			// 3. tell scrollama to update new element dimensions
 			scroller.resize();
 		}
+
+		var syd_zoom = [-1 * window.innerWidth / 4, -1 * window.innerHeight / 2, 8.0]
 
 		var changes = []
 		var sentiment;
@@ -225,7 +232,10 @@
 			})
 
 			// update graphic based on step
-            if (response.index === 1) {				
+            if (response.index === 1) {		
+				figure.select('.legend').text("🟦 Airbnb properties")
+				figure.select('.legend_2').text("")
+				figure.select('.legend_3').text("")		
 				d3.selectAll("path")
 					.attr("fill", "gray")
 					.attr("stroke", "white")
@@ -233,6 +243,9 @@
 					.attr("fill", "blue")
 					.attr("r", 1)
             } else if (response.index === 2) {
+				figure.select('.legend').text("🟩 Properties available")
+				figure.select('.legend_2').text("")
+				figure.select('.legend_3').text("")
 				// Whole AVG availability
 				d3.selectAll("path")
 					.attr("fill", "black")
@@ -247,6 +260,9 @@
 						}
 					})
 			} else if (response.index === 3) {
+				figure.select('.legend').text("🟩 Properties available (NYE)")
+				figure.select('.legend_2').text("")
+				figure.select('.legend_3').text("")
 				// Whole NYE availability
 				d3.selectAll("path")
 					.attr("fill", "black")
@@ -266,6 +282,9 @@
 				})
 
 			} else if (response.index === 4) {
+				figure.select('.legend').text("🟩 Below avg normally and on NYE")
+				figure.select('.legend_2').text("🟥 Above avg normally and on NYE")
+				figure.select('.legend_3').text("🟧 Above avg normally and below avg on NYE")
 				// Whole pricing avg
 				d3.selectAll("path")
 					.transition()
@@ -291,7 +310,10 @@
 							return "green"
 						}
 					})
-			} else if (response.index === 6) {
+			} else if (response.index === 5) {
+				figure.select('.legend').text("🟩 Properties available")
+				figure.select('.legend_2').text("")
+				figure.select('.legend_3').text("")
 				// Sydney AVG availability
 				svg.selectAll("circle")
 					.attr("fill", "green").attr("r", 0.3)
@@ -314,8 +336,11 @@
 							return 0
 						}
 					})
-					.call(zoom.transform, d3.zoomIdentity.translate(-400,-300).scale(6.0))
-			} else if (response.index === 7) {
+					.call(zoom.transform, d3.zoomIdentity.translate(syd_zoom[0],syd_zoom[1]).scale(syd_zoom[2]))
+			} else if (response.index === 6) {
+				figure.select('.legend').text("🟩 Properties available (NYE)")
+				figure.select('.legend_2').text("")
+				figure.select('.legend_3').text("")
 				// Sydney NYE availability
 
 				svg.selectAll("circle")
@@ -330,7 +355,7 @@
 
 				svg.selectAll("path")
 					.transition()
-					.duration(1000)
+					.duration(3000)
 					.attr("opacity", function(d) {
 						if (d['properties']['neighbourhood'] === 'Sydney') {
 							return 1 
@@ -338,9 +363,12 @@
 							return 0
 						}
 					})
-					.call(zoom.transform, d3.zoomIdentity.translate(-400,-300).scale(6.0))
+					.call(zoom.transform, d3.zoomIdentity.translate(syd_zoom[0],syd_zoom[1]).scale(syd_zoom[2]))
 			
-			} else if (response.index === 8) {
+			} else if (response.index === 7) {
+				figure.select('.legend').text("🟩 Below avg normally and on NYE")
+				figure.select('.legend_2').text("🟥 Above avg normally and on NYE")
+				figure.select('.legend_3').text("🟧 Above avg normally and below avg on NYE")
 				// Sydney pricing avg
 
 				svg.selectAll("circle")
@@ -364,9 +392,23 @@
 							return "green"
 						}
 					})
+				svg.selectAll("path")
+					.transition()
+					.duration(3000)
+					.attr("opacity", function(d) {
+						if (d['properties']['neighbourhood'] === 'Sydney') {
+							return 1 
+						} else {
+							return 0
+						}
+					})
+					.call(zoom.transform, d3.zoomIdentity.translate(syd_zoom[0],syd_zoom[1]).scale(syd_zoom[2]))
 
-			} else if (response.index === 9) {
-				// Whole sentiment
+			} else if (response.index === 8) {
+				figure.select('.legend').text("🟩 All reviews positive")
+				figure.select('.legend_2').text("")
+				figure.select('.legend_3').text("")
+				// Whole sentiment (positive)
 				d3.selectAll("path")
 					.transition()
 					.duration(3000)
@@ -376,6 +418,8 @@
 
 
 				svg.selectAll("circle")
+					.transition()
+					.duration(3000)
 					.attr("opacity", function(d) {
 						if (sentiment['prop_positive'][d['properties']['id']] === 1) {
 							return 1
@@ -387,8 +431,11 @@
 					.attr("r", 1)
 
 
-			} else if (response.index === 10) {
-
+			} else if (response.index === 9) {
+				figure.select('.legend').text("🟧 Mixed reviews")
+				figure.select('.legend_2').text("")
+				figure.select('.legend_3').text("")
+				// Whole sentiment (mixed)
 				svg.selectAll("circle")
 					.transition()
 					.duration(1000)
@@ -402,8 +449,19 @@
 					.attr("fill", "orange")
 					.attr("r", 1)
 
-			} else if (response.index === 11) {
+			} else if (response.index === 10) {
+				figure.select('.legend').text("🟥 Mostly negative reviews")
+				figure.select('.legend_2').text("")
+				figure.select('.legend_3').text("")
 
+				d3.selectAll("path")
+					.transition()
+					.duration(3000)
+					.attr("fill", "black")
+					.attr("opacity", 1)
+					.call(zoom.transform, d3.zoomIdentity.translate(0,0).scale(1.0))
+
+				// Whole sentiment (negative)
 				svg.selectAll("circle")
 					.transition()
 					.duration(1000)
@@ -418,24 +476,13 @@
 					.attr("r", 1)
 
 			} else if (response.index === 11) {
-
-				svg.selectAll("circle")
-					.transition()
-					.duration(1000)
-					.attr("opacity", function(d) {
-						if (sentiment['prop_positive'][d['properties']['id']] < 0.5) {
-							return 1
-						} else {
-							return 0
-						}
-					})
-					.attr("fill", "red")
-					.attr("r", 1)
-
-			} else if (response.index === 12) {
+				figure.select('.legend').text("🟩 All reviews positive")
+				figure.select('.legend_2').text("🟧 Mixed reviews")
+				figure.select('.legend_3').text("🟥 Mostly negative reviews")
+				// Sydney sentiment
 				svg.selectAll("path")
 					.transition()
-					.duration(1000)
+					.duration(3000)
 					.attr("opacity", function(d) {
 						if (d['properties']['neighbourhood'] === 'Sydney') {
 							return 1 
@@ -443,7 +490,7 @@
 							return 0
 						}
 					})
-					.call(zoom.transform, d3.zoomIdentity.translate(-400,-300).scale(6.0))
+					.call(zoom.transform, d3.zoomIdentity.translate(syd_zoom[0],syd_zoom[1]).scale(syd_zoom[2]))
 
 					svg.selectAll("circle")
 						.transition()
@@ -469,7 +516,12 @@
 								return "green"
 							}
 						}).attr("r", 0.3)
-			} else if (response.index === 13) {
+					
+			} else if (response.index === 12) {
+				// Hurstville
+				figure.select('.legend').text("🟩 All reviews positive")
+				figure.select('.legend_2').text("🟧 Mixed reviews")
+				figure.select('.legend_3').text("🟥 Mostly negative reviews")
 				svg.selectAll("path")
 					.transition()
 					.duration(1000)
@@ -480,7 +532,7 @@
 							return 0
 						}
 					})
-					.call(zoom.transform, d3.zoomIdentity.translate(-200,-800).scale(6.0))
+					.call(zoom.transform, d3.zoomIdentity.translate(window.innerWidth / 13, -1 * window.innerHeight / 1).scale(8.0))
 
 
 				svg.selectAll("circle")
